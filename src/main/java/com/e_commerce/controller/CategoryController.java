@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/category/api")
 public class CategoryController {
 
     //    @Autowired //This also works in injecting the categoryService bean without using constructor injection.
