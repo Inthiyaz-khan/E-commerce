@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryResponse {
-    private List<CategoryDTO> categoryResponse;
+public class ResponseCategory {
+    private List<RequestCategory> categoryResponse;
     private Integer pageNumber;
     private Integer pageSize;
     private Long totalElements;
