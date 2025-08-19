@@ -1,7 +1,7 @@
 package com.e_commerce.service;
 
-import com.e_commerce.dto.RequestCategory;
-import com.e_commerce.dto.ResponseCategory;
+import com.e_commerce.dto.CategoryRequest;
+import com.e_commerce.dto.CategoryResponse;
 import com.e_commerce.exception.APIException;
 import com.e_commerce.exception.ResourceNotFoundException;
 import com.e_commerce.model.Category;
@@ -25,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Autowired
     private ModelMapper modelMapper;
     @Override
-    public ResponseCategory getCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+    public CategoryResponse getCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
 //        Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
 //        List<Category> category = categoryRepo.findAll(pageable).getContent();
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
@@ -35,45 +35,45 @@ public class CategoryServiceImpl implements CategoryService{
         if (category.isEmpty())
             throw new APIException("Categories are empty..!");
 
-        List<RequestCategory> requestCategories = category.stream()
-                .map(c -> modelMapper.map(c, RequestCategory.class))
+        List<CategoryRequest> requestCategories = category.stream()
+                .map(c -> modelMapper.map(c, CategoryRequest.class))
                 .toList();
-        ResponseCategory responseCategory = new ResponseCategory();
-        responseCategory.setPageNumber(categoryPage.getNumber());
-        responseCategory.setPageSize(categoryPage.getSize());
-        responseCategory.setTotalElements(categoryPage.getTotalElements());
-        responseCategory.setTotalPages(categoryPage.getTotalPages());
-        responseCategory.setLastPage(categoryPage.isLast());
-        responseCategory.setFirstPage(categoryPage.isFirst());
-        responseCategory.setCategoryResponse(requestCategories);
-        return responseCategory;
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setPageNumber(categoryPage.getNumber());
+        categoryResponse.setPageSize(categoryPage.getSize());
+        categoryResponse.setTotalElements(categoryPage.getTotalElements());
+        categoryResponse.setTotalPages(categoryPage.getTotalPages());
+        categoryResponse.setLastPage(categoryPage.isLast());
+        categoryResponse.setFirstPage(categoryPage.isFirst());
+        categoryResponse.setCategoryResponse(requestCategories);
+        return categoryResponse;
     }
 
     @Override
-    public RequestCategory createCategory(RequestCategory requestCategory) {
-        Category newCategory = modelMapper.map(requestCategory, Category.class);
+    public CategoryRequest createCategory(CategoryRequest categoryRequest) {
+        Category newCategory = modelMapper.map(categoryRequest, Category.class);
         Category category = categoryRepo.findByCategoryName(newCategory.getCategoryName());
         if(category != null)
-            throw new APIException("Category with name \""+ requestCategory.getCategoryName()+"\" already exists..!");
+            throw new APIException("Category with name \""+ categoryRequest.getCategoryName()+"\" already exists..!");
         Category savedCategory = categoryRepo.save(newCategory);
-        return modelMapper.map(savedCategory, RequestCategory.class);
+        return modelMapper.map(savedCategory, CategoryRequest.class);
     }
 
     @Override
-    public RequestCategory deleteCategory(Long id) {
+    public CategoryRequest deleteCategory(Long id) {
 //        Category categoryModel = categoryRepo.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
         Category existingCategory = categoryRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Category", "categoryId",id));
         categoryRepo.delete(existingCategory);
 //        return "Category "+id+" deleted successfully";
-        return modelMapper.map(existingCategory, RequestCategory.class);
+        return modelMapper.map(existingCategory, CategoryRequest.class);
     }
 
     @Override
-    public RequestCategory updateCategory(RequestCategory requestCategory, Long id) {
+    public CategoryRequest updateCategory(CategoryRequest categoryRequest, Long id) {
 //        Category newCategory = categoryRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
         Category newCategory = categoryRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Category", "categoryId",id));
-        newCategory.setCategoryName(requestCategory.getCategoryName());
+        newCategory.setCategoryName(categoryRequest.getCategoryName());
         Category updatedCategory = categoryRepo.save(newCategory);
-        return modelMapper.map(updatedCategory, RequestCategory.class);
+        return modelMapper.map(updatedCategory, CategoryRequest.class);
     }
 }

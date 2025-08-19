@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseCategory {
-    private List<RequestCategory> categoryResponse;
+public class CategoryResponse {
+    private List<CategoryRequest> categoryResponse;
     private Integer pageNumber;
     private Integer pageSize;
     private Long totalElements;
