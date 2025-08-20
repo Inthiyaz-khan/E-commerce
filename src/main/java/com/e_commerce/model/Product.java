@@ -1,8 +1,6 @@
 package com.e_commerce.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,15 +10,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity(name = "products")
 public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long productId;
     private String productName;
+    private String image;
     private String description;
     private Integer quantity;
-    private Double price;
-    private Double discount;
-    private Double specialPrice;
+    private double price;
+    private double discount;
+    private double specialPrice;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 }
