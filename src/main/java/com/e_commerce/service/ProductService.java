@@ -2,10 +2,10 @@ package com.e_commerce.service;
 
 import com.e_commerce.dto.ProductDTO;
 import com.e_commerce.dto.ProductResponse;
-import com.e_commerce.model.Product;
+import jakarta.validation.Valid;
 
 public interface ProductService {
-    ProductDTO addProduct(Long categoryId, Product product);
+    ProductDTO addProduct(Long categoryId, @Valid ProductDTO product);
 
     ProductResponse getAllProducts();
 
@@ -13,7 +13,7 @@ public interface ProductService {
 
     ProductResponse getProductsByKeyword(String keyword);
 
-    ProductDTO updateProduct(Product product, Long productId);
+    ProductDTO updateProduct(ProductDTO product, Long productId);
 
     ProductDTO deleteProduct(Long productId);
 }

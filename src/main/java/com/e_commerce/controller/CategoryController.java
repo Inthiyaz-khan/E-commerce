@@ -1,7 +1,7 @@
 package com.e_commerce.controller;
 
 import com.e_commerce.config.AppConstants;
-import com.e_commerce.dto.CategoryRequest;
+import com.e_commerce.dto.CategoryDTO;
 import com.e_commerce.dto.CategoryResponse;
 import com.e_commerce.service.CategoryService;
 import jakarta.validation.Valid;
@@ -32,22 +32,22 @@ public class CategoryController {
     }
 
     @PostMapping("/admin/category/create")
-    public ResponseEntity<CategoryRequest> createCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
-        CategoryRequest newCategory = categoryService.createCategory(categoryRequest);
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO newCategory = categoryService.createCategory(categoryDTO);
         return new ResponseEntity<>(newCategory, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/category/delete/{id}")
-    public ResponseEntity<CategoryRequest> deleteCategory(@PathVariable Long id) {
-        CategoryRequest deletedCategory = categoryService.deleteCategory(id);
+    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long id) {
+        CategoryDTO deletedCategory = categoryService.deleteCategory(id);
         return new ResponseEntity<>(deletedCategory, HttpStatus.OK);
         //return ResponseEntity.ok(status);
         //return ResponseEntity.status(HttpStatus.OK).body(status);
     }
 
     @PutMapping("/admin/category/update/{id}")
-    public ResponseEntity<CategoryRequest> updateCategory(@RequestBody CategoryRequest categoryRequest, @PathVariable Long id) {
-        CategoryRequest updatedCategory = categoryService.updateCategory(categoryRequest, id);
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO, @PathVariable Long id) {
+        CategoryDTO updatedCategory = categoryService.updateCategory(categoryDTO, id);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }
 }
