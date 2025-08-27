@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/category/api")
+@RequestMapping("/api")
 public class CategoryController {
 
     //    @Autowired //This also works in injecting the categoryService bean without using constructor injection.
@@ -21,7 +21,7 @@ public class CategoryController {
     }
 
     //@RequestMapping(value = "/public/categories",method = RequestMethod.GET)
-    @GetMapping("/public/categories")
+    @GetMapping("/public/category/categories")
     public ResponseEntity<CategoryResponse> getCategories(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
@@ -31,13 +31,13 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @PostMapping("/admin/createCategory")
+    @PostMapping("/admin/category/create")
     public ResponseEntity<CategoryRequest> createCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
         CategoryRequest newCategory = categoryService.createCategory(categoryRequest);
         return new ResponseEntity<>(newCategory, HttpStatus.OK);
     }
 
-    @DeleteMapping("/admin/deleteCategory/{id}")
+    @DeleteMapping("/admin/category/delete/{id}")
     public ResponseEntity<CategoryRequest> deleteCategory(@PathVariable Long id) {
         CategoryRequest deletedCategory = categoryService.deleteCategory(id);
         return new ResponseEntity<>(deletedCategory, HttpStatus.OK);
@@ -45,7 +45,7 @@ public class CategoryController {
         //return ResponseEntity.status(HttpStatus.OK).body(status);
     }
 
-    @PutMapping("/admin/updateCategory/{id}")
+    @PutMapping("/admin/category/update/{id}")
     public ResponseEntity<CategoryRequest> updateCategory(@RequestBody CategoryRequest categoryRequest, @PathVariable Long id) {
         CategoryRequest updatedCategory = categoryService.updateCategory(categoryRequest, id);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
