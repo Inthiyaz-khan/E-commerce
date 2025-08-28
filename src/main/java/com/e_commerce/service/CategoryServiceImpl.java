@@ -23,6 +23,9 @@ public class CategoryServiceImpl implements CategoryService{
     private CategoryRepository categoryRepo;
 
     @Autowired
+    private CategoryResponse categoryResponse;
+
+    @Autowired
     private ModelMapper modelMapper;
     @Override
     public CategoryResponse getCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
@@ -32,13 +35,13 @@ public class CategoryServiceImpl implements CategoryService{
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Category> categoryPage = categoryRepo.findAll(pageable);
         List<Category> category = categoryPage.getContent();
+
         if (category.isEmpty())
             throw new APIException("Categories are empty..!");
 
         List<CategoryDTO> requestCategories = category.stream()
                 .map(c -> modelMapper.map(c, CategoryDTO.class))
                 .toList();
-        CategoryResponse categoryResponse = new CategoryResponse();
         categoryResponse.setPageNumber(categoryPage.getNumber());
         categoryResponse.setPageSize(categoryPage.getSize());
         categoryResponse.setTotalElements(categoryPage.getTotalElements());

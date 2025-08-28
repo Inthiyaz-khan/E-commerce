@@ -12,15 +12,15 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -68,28 +68,66 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductResponse getAllProducts() {
-        List<Product> products = productRepository.findAll();
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Product> page = productRepository.findAll(pageable);
+        List<Product> products = page.getContent();
+
         List<ProductDTO> allProducts = products.stream().map(product -> modelMapper.map(product, ProductDTO.class)).toList();
         if (products.isEmpty())
             throw new APIException("No products exist!");
+
+        productResponse.setPageNumber(page.getNumber());
+        productResponse.setPageSize(page.getSize());
+        productResponse.setTotalElements(page.getTotalElements());
+        productResponse.setTotalPages(page.getTotalPages());
+        productResponse.setIsFirstPage(page.isFirst());
+        productResponse.setIsLastPage(page.isLast());
         productResponse.setProductResponse(allProducts);
         return productResponse;
     }
 
     @Override
-    public ProductResponse getProductsByCategory(Long categoryId) {
+    public ProductResponse getProductsByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
-        List<Product> productsByCategory = productRepository.findByCategory(category);
+
+        Sort sort = sortBy.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Product> page = productRepository.findByCategory(category, pageable);
+        List<Product> productsByCategory = page.getContent();
+
+        if (productsByCategory.isEmpty())
+            throw new APIException(category.getCategoryName() + "category does not have any products");
+
         List<ProductDTO> productDTOS = productsByCategory.stream().map(product -> modelMapper.map(product, ProductDTO.class)).toList();
+        productResponse.setPageNumber(page.getNumber());
+        productResponse.setPageSize(page.getSize());
+        productResponse.setTotalElements(page.getTotalElements());
+        productResponse.setTotalPages(page.getTotalPages());
+        productResponse.setIsFirstPage(page.isFirst());
+        productResponse.setIsLastPage(page.isLast());
         productResponse.setProductResponse(productDTOS);
         return productResponse;
     }
 
     @Override
-    public ProductResponse getProductsByKeyword(String keyword) {
-        List<Product> productsByKeyword = productRepository.findByProductNameLikeIgnoreCase('%'+keyword+'%');
+    public ProductResponse getProductsByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+        Sort sort = sortBy.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Product> page = productRepository.findByProductNameLikeIgnoreCase('%'+keyword+'%', pageable);
+        List<Product> productsByKeyword = page.getContent();
+
+        if (productsByKeyword.isEmpty())
+            throw new APIException("No products found with keyword: " + keyword);
+
         List<ProductDTO> productDTOS = productsByKeyword.stream().map(product -> modelMapper.map(product, ProductDTO.class)).toList();
+        productResponse.setPageNumber(page.getNumber());
+        productResponse.setPageSize(page.getSize());
+        productResponse.setTotalElements(page.getTotalElements());
+        productResponse.setTotalPages(page.getTotalPages());
+        productResponse.setIsFirstPage(page.isFirst());
+        productResponse.setIsLastPage(page.isLast());
         productResponse.setProductResponse(productDTOS);
         return productResponse;
     }

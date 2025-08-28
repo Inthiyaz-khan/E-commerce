@@ -1,5 +1,6 @@
 package com.e_commerce.config;
 
+import com.e_commerce.dto.CategoryResponse;
 import com.e_commerce.dto.ProductResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -16,5 +17,10 @@ public class AppConfig {
     @Bean
     public ProductResponse productResponse() {
         return new ProductResponse();
+    }
+
+    @Bean
+    public CategoryResponse categoryResponse() {
+        return new CategoryResponse();
     }
 }
